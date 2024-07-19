@@ -79,12 +79,17 @@ class ProductManager {
     }
   };
 
-  async deleteProduct(id, data) {
+  async deleteProduct(id) {
     const arrayProd = await this.readFile();
     const indexProd = arrayProd.findIndex((item) => item.id === id);
 
+    const deletedProd = await this.getProductsById(id);
+
     if (indexProd !== -1) {
       arrayProd.splice(indexProd, 1);
+      console.log("Se elimino correctamente " + deletedProd.title);
+      await this.saveFile(arrayProd);
+      return deletedProd;
     } else {
       console.log("No se encuentra el producto");
     }

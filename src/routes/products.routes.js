@@ -55,9 +55,9 @@ router.delete("/:pid", async (req, res) => {
   const deletedProd = await manager.deleteProduct(parseInt(id));
 
   if (!deletedProd) {
-    res.status(404).send({ message: "Error al eliminar el producto", error: deletedProd });
+    res.status(404).send({ message: "Error al eliminar el producto", error: "Producto no encontrado" });
   } else {
-    res.status(200).send(`Se ha eliminado el producto ${deletedProd.title} correctamente`);
+    res.status(200).send(`Se ha eliminado ${deletedProd.title} correctamente`);
   }
 });
 
