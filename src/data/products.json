@@ -1,0 +1,33 @@
+[
+  {
+    "id": 1,
+    "title": "Fideo",
+    "description": "Moñito Luccheti",
+    "price": "3900",
+    "img": "whithout image",
+    "code": "83174",
+    "stock": "530",
+    "category": "almacen"
+  },
+  {
+    "id": 2,
+    "title": "Fideo",
+    "description": "Tirabuzon Matarazzo",
+    "price": "3500",
+    "img": "whithout image",
+    "code": "35074",
+    "stock": "870"
+  },
+  {
+    "id": 3,
+    "title": "Pan",
+    "description": "Libre de gluten",
+    "price": 3700,
+    "img": "whithout image",
+    "code": "33074",
+    "stock": "870",
+    "category": "almacen",
+    "status": true,
+    "thumbnails": []
+  }
+]
