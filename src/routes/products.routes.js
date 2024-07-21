@@ -44,7 +44,7 @@ router.put("/:pid", async (req, res) => {
   const updatedProduct = await manager.updateProduct(parseInt(id), newData);
 
   if (!updatedProduct) {
-    res.status(404).send({ message: "Error al actualizar el producto", error: updatedProduct });
+    res.status(404).send({ message: "Error al actualizar el producto" });
   } else {
     res.status(200).send(`Se ha actualizado el producto ${newData.title} correctamente`);
   }

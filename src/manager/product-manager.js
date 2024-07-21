@@ -2,22 +2,24 @@ import { promises as fs } from "fs";
 
 class ProductManager {
 
+  static lastId = 0;
+
   constructor(path) {
     this.products = [];
     this.path = path;
   };
 
-  async addProduct({ title, description, price, img, code, stock, category, thumbnails }) {
+  async addProduct( { title, description, price, code, stock, category, thumbnails, status } ) {
 
     try {
-      const arrayProductos = await this.readFile();
+      const arrayProducts = await this.readFile();
 
-      if (!title || !description || !price || !img || !code || !stock || !category) {
+      if (!title || !description || !price || !code || !stock || !category || !status) {
         console.log("Todos los campos son obligatorios");
         return;
       }
 
-      if (arrayProductos.some(item => item.code === code)) {
+      if (arrayProducts.some(item => item.code === code)) {
         console.log("El codigo debe ser unico..");
         return;
       }
@@ -27,7 +29,6 @@ class ProductManager {
         title,
         description,
         price,
-        img,
         code,
         stock,
         category,
@@ -35,15 +36,15 @@ class ProductManager {
         thumbnails: thumbnails || []
       }
 
-      if (arrayProductos.length > 0) {
-        ProductManager.lastId = arrayProductos.reduce((maxId, product) => Math.max(maxId, product.id), 0);
+      if (arrayProducts.length > 0) {
+        ProductManager.lastId = arrayProducts.reduce((maxId, product) => Math.max(maxId, product.id), 0);
       }
 
       newProduct.id = ++ProductManager.lastId;
 
-      arrayProductos.push(newProduct);
+      arrayProducts.push(newProduct);
 
-      await this.saveFile(arrayProductos);
+      await this.saveFile(arrayProducts);
 
     } catch (error) {
       console.log("Error al agregar productos");
@@ -60,23 +61,36 @@ class ProductManager {
     const arrayProd = await this.readFile();
     const indexProd = arrayProd.findIndex((item) => item.id === id);
 
-    if (indexProd !== -1) {
-      arrayProd[indexProd].title = data.title;
-      arrayProd[indexProd].description = data.description;
-      arrayProd[indexProd].price = data.price;
-      arrayProd[indexProd].img = data.img;
-      arrayProd[indexProd].code = data.code;
-      arrayProd[indexProd].stock = data.stock;
-      arrayProd[indexProd].category = data.category;
-      arrayProd[indexProd].status = data.status;
-      arrayProd[indexProd].thumbnails = data.thumbnails;
+    try {
 
-      await this.saveFile(arrayProd);
-      return true;
-    } else {
-      console.error("No se encuentra el producto");
-      return Promise.reject(null);
+      if (indexProd !== -1) {
+
+        arrayProd[indexProd].title = data.title || arrayProd[indexProd].title;
+        arrayProd[indexProd].description = data.description || arrayProd[indexProd].description;
+        arrayProd[indexProd].price = data.price || arrayProd[indexProd].price;
+        arrayProd[indexProd].img = data.img || arrayProd[indexProd].img;
+        arrayProd[indexProd].code = data.code || arrayProd[indexProd].code;
+        arrayProd[indexProd].stock = data.stock || arrayProd[indexProd].stock;
+        arrayProd[indexProd].category = data.category || arrayProd[indexProd].category;
+        arrayProd[indexProd].status = data.status || arrayProd[indexProd].status;
+        arrayProd[indexProd].thumbnails = data.thumbnails || arrayProd[indexProd].thumbnails;
+
+        await this.saveFile(arrayProd);
+        return true;
+
+      } else {
+
+        console.error("No se encuentra el producto");
+        return false
+
+      };
+
+    } catch (error) {
+
+      console.error(error);
+
     }
+
   };
 
   async deleteProduct(id) {

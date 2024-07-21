@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 
-class Cartmanager {
+class CartManager {
+
   static lastId = 0;
 
   constructor(path) {
@@ -8,61 +9,46 @@ class Cartmanager {
     this.path = path;
   };
 
-  async addProduct(title, description, price, img, code, stock) {
+  async addCart({ id, products }) {
+    const { prodId, quantity } = products;
+    try {
 
-    if (!title || !description || !price || !img || !code || !stock) {
-      console.error("Todos os campos son obligatorios");
-      return;
-    };
+      const arrayCarts = await this.readFile();
 
-    if (this.products.some(item => item.code === code)) {
-      console.error("El codigo deve ser unico!");
-      return;
-    };
+      const newCart = {
+        id,
+        products: products || [{
+          prodId,
+          quantity: quantity ? quantity : 1
+        }]
+      };
 
-    const newProduct = {
-      id: ++Cartmanager.lastId,
-      title,
-      description,
-      price,
-      img,
-      code,
-      stock
-    };
+      if (arrayCarts.length > 0) {
+        CartManager.lastId = arrayCarts.reduce((maxId, cart) => Math.max(maxId, cart.id), 0);
+      }
 
-    this.products.push(newProduct);
+      newCart.id = ++CartManager.lastId;
+      arrayCarts.push(newCart);
+      this.saveFile(arrayCarts);
 
-    await this.saveFile(this.products);
-  };
+    } catch (error) {
 
-  async getProducts() {
-    const newArray = await this.readFile();
-    return newArray;
-  };
+      console.log(error);
+      throw error;
 
-  async getProductsById(id) {
-    const arrayProd = await this.readFile();
-    const found = arrayProd.find((item) => item.id === id);
-
-    if (!found) {
-      return console.error("El producto no existe");
-    } else {
-      return found;
-    };
-
-  };
+    }
+  }
 
   async readFile() {
     const res = await fs.readFile(this.path, "utf-8");
-    const arrayProd = JSON.parse(res);
-    return arrayProd;
+    const arrayCart = JSON.parse(res);
+    return arrayCart;
   }
 
-  async saveFile(arrayProd) {
-    await fs.writeFile(this.path, JSON.stringify(arrayProd, null, 2));
+  async saveFile(arrayCart) {
+    await fs.writeFile(this.path, JSON.stringify(arrayCart, null, 2));
   }
 
 };
 
-
-export default Cartmanager;
+export default CartManager;
