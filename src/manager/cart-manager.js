@@ -28,14 +28,14 @@ class CartManager {
       console.log(error);
       throw error;
 
-    }
-  }
+    };
+  };
 
   async getCartById(id) {
     const carts = await this.readFile();
     const cartById = carts.find((cart) => cart.id === id);
     return cartById;
-  }
+  };
 
   async addProductToCart(idCart, idProduct) {
     const carts = await this.readFile();
@@ -68,11 +68,11 @@ class CartManager {
     const res = await fs.readFile(this.path, "utf-8");
     const arrayCart = JSON.parse(res);
     return arrayCart;
-  }
+  };
 
   async saveFile(arrayCart) {
     await fs.writeFile(this.path, JSON.stringify(arrayCart, null, 2));
-  }
+  };
 };
 
 export default CartManager;
